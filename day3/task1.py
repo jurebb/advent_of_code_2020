@@ -11,7 +11,7 @@ def increment_right_step(right_step, pattern_len):
 
 
 def check_tree(pattern, right_step):
-    print(pattern[right_step])
+    print(pattern[right_step], right_step)
     return pattern[right_step] == TREE_CHR
 
 
