@@ -20,6 +20,18 @@ def main():
     down_step = 0
     right_step = 0
 
+    skip_step = 0
+    for line in sys.stdin:
+        skip_step += 1
+        line = line.strip()
+        line_len = len(line)
+        print(line, 'skipping')
+        right_step = increment_right_step(right_step, line_len)
+        if skip_step < DOWN_INCR:
+            continue
+        else:
+            break
+
     for line in sys.stdin:
         line = line.strip()
         line_len = len(line)
