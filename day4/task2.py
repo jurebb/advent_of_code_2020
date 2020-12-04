@@ -10,6 +10,9 @@ class TwoSplitOperation:
     def validate(self, value):
         validity = True
 
+        if not self.split_on in value:
+            return validity
+
         if self.pre_rule:
             validity = validity and self.pre_rule.validate(value.split(self.split_on)[0])
 
@@ -25,17 +28,27 @@ class PrefSuffRule:
         self.valid_suffixes = valid_suffixes
 
     def validate(self, value):
+
         if self.valid_prefixes:
+            matches = 0
             for pref in self.valid_prefixes:
 
-                if not value.startswith(pref):
-                    return False
+                if value.startswith(pref):
+                    matches += 1
+
+            if not matches >= 1:
+                return False
 
         if self.valid_suffixes:
+            matches = 0
+
             for suff in self.valid_suffixes:
 
-                if not value.endswith(suff):
-                    return False
+                if value.endswith(suff):
+                    matches += 1
+
+            if not matches >= 1:
+                return False
 
         return True
 
@@ -50,14 +63,15 @@ class NumberRule:
     def validate(self, value):
         assert type(value) == str
 
-        if not value.startswith('0'):
-            return False
-
-        value = int(value)  # TODO what if float
+        if not self.leading_zeros:
+            value = int(value)
 
         if self.num_of_digits:
             if not len(str(value)) == self.num_of_digits:
                 return False
+
+        if self.leading_zeros:
+            value = int(value)  # TODO what if float
 
         if self.upper_value_bound:
             if value > self.upper_value_bound:
@@ -119,10 +133,8 @@ REQIURED_VALUES = {
             TwoSplitOperation(split_on='cm', pre_rule=NumberRule(upper_value_bound=193, lower_value_bound=150)),
             TwoSplitOperation(split_on='in', pre_rule=NumberRule(upper_value_bound=76, lower_value_bound=59))],
     'hcl': [PrefSuffRule(valid_prefixes=['#']),
-            TwoSplitOperation(split_on='#', post_rule=CharRule(valid_chars=list(map(str, range(10))),
+            TwoSplitOperation(split_on='#', post_rule=CharRule(valid_chars=list(map(str, range(10))) + ['a', 'b', 'c', 'd', 'e', 'f'],
                                                                char_count=6)),
-            TwoSplitOperation(split_on='#', post_rule=CharRule(valid_chars=['a', 'b', 'c', 'd', 'e', 'f'],
-                                                               char_count=6))
             ],
     'ecl': [CharRule(exact_match_one_of=['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'])],
     'pid': [NumberRule(num_of_digits=9, leading_zeros=True)]
@@ -135,14 +147,22 @@ def count_valid_passports(passports):
     for passport in passports:
         passport_dict = dict(field.split(':') for field in passport)
 
+        print(passport_dict)
+
         required_fields_validity = not REQIURED_KEYS - set(passport_dict.keys())
+        if required_fields_validity:
+            print('PASSED REQUIRED FIELDS')
+        else:
+            continue
 
         validity = True
 
         for key, val in passport_dict.items():
             if key != 'cid':
                 for rule in REQIURED_VALUES[key]:
-                    validity = validity and rule.validate(val)
+                    result_val = rule.validate(val)
+                    print('checking', (key, val, rule, result_val))
+                    validity = validity and result_val
 
         required_values_validity = validity
 
