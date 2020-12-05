@@ -49,6 +49,13 @@ class PartitionCols(Partition):
         self.upper_sign = 'R'
 
 
+def print_candidate_seats(max_seat_id, seat_ids):
+    for candidate_seat_id in range(max_seat_id):
+        if candidate_seat_id not in seat_ids:
+            if (candidate_seat_id - 1) in seat_ids and (candidate_seat_id + 1) in seat_ids:
+                print(candidate_seat_id)
+
+
 def get_seat_id(row_part, col_part):
     return row_part.get_position() * ROW_WEIGHT + col_part.get_position() * COL_WEIGHT
 
@@ -81,10 +88,7 @@ def main():
     max_seat_id = max(seat_ids)
     seat_ids = set(seat_ids)
 
-    for candidate_seat_id in range(max_seat_id):
-        if candidate_seat_id not in seat_ids:
-            if (candidate_seat_id - 1) in seat_ids and (candidate_seat_id + 1) in seat_ids:
-                print(candidate_seat_id)
+    print_candidate_seats(max_seat_id, seat_ids)
 
 
 if __name__ == '__main__':
