@@ -20,14 +20,12 @@ def extract_count_groups_from_stdin(groups):
             current_group = set()
 
         elif new_current:
-            current_group = set(line)
             new_current = False
+            current_group = set(line)
 
         else:
             new_current = False
             current_group &= set(line)
-
-        print('cg', current_group)
 
     if current_group:
         groups.append(current_group)
@@ -42,7 +40,6 @@ def main():
 
     sum_of_pos_answers = extract_count_groups_from_stdin(groups)
 
-    print(groups)
     print(sum_of_pos_answers)
 
 
