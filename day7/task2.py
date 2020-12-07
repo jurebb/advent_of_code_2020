@@ -34,6 +34,7 @@ def traverse_sub_bags(node, counter, multiplier, rules_dict, parent=False):
         result = int(multiplier) * siblings_sum + int(multiplier)
     else:
         result = int(multiplier) * siblings_sum
+
     print('current {} result = {}'.format(node, result))
     return result
 
