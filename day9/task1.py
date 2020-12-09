@@ -33,19 +33,18 @@ def update_preamble_combinations(preamble_combinations, els, new_el, oldest_els)
     return new_preamble_combinations
 
 
-def validate_next_entries(preamble_combinations, els, oldest_els):
+def validate_next_entries(preamble_combinations, els, oldest_els, read_lines):
     entry_valid = True
 
     while entry_valid:
         line = sys.stdin.readline().strip()
+        read_lines.append(int(line))
 
         if line:
             new_el = int(line)
             if new_el in preamble_combinations:
-                preamble_combinations = update_preamble_combinations(preamble_combinations,
-                                                                     els,
-                                                                     new_el,
-                                                                     oldest_els)
+                preamble_combinations = update_preamble_combinations(preamble_combinations, els,
+                                                                     new_el, oldest_els)
 
             else:
                 break
@@ -53,18 +52,27 @@ def validate_next_entries(preamble_combinations, els, oldest_els):
         else:
             break
 
-    print(line)
+    invalid_num = line
+
+    for line in sys.stdin:
+        if line:
+            read_lines.append(int(line.strip()))
+
+    return invalid_num, read_lines
 
 
-def initial_read_preamble():
+def initial_read_preamble(stdin_arg=None):
     preamble = list()
+    read_lines = list()
+
+    stdin = sys.stdin if stdin_arg is None else stdin_arg
 
     for _ in range(PREAMBLE_LEN):
-        line = sys.stdin.readline().strip()
+        line = stdin.readline().strip()
+        read_lines.append(int(line))
 
         if line:
             preamble.append(int(line))
-
 
     els = set(preamble)
     oldest_els = preamble.copy()
@@ -78,14 +86,16 @@ def initial_read_preamble():
         else:
             preamble_combs_dict[sum].append((comb_pair[0], comb_pair[1]))
 
-    return preamble_combs_dict, els, oldest_els
+    return preamble_combs_dict, els, oldest_els, read_lines
 
 
-def main():
-    preamble_combinations, els, oldest_els = initial_read_preamble()
+def run_task(stdin=None):
+    preamble_combinations, els, oldest_els, read_lines = initial_read_preamble(stdin)
+    num, read_lines = validate_next_entries(preamble_combinations, els, oldest_els, read_lines)
+    print(num)
 
-    validate_next_entries(preamble_combinations, els, oldest_els)
+    return num, read_lines
 
 
 if __name__ == '__main__':
-    main()
+    run_task()
