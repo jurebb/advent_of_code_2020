@@ -72,10 +72,39 @@ def calculate_subtree_arrangements_base(node, all_nodes):
     return sum_arrangs
 
 
+def calculate_subtree_arrangements_o1(node, all_nodes, calculated):
+    if node.value == 0:
+        return 1
+
+    candidate_nodes_diffs = list()
+    ind_diff = 1
+    for candidate_node in all_nodes[:3]:
+        diff = node.value - candidate_node.value
+
+        if diff in {1, 2, 3}:
+            candidate_nodes_diffs.append((candidate_node, ind_diff))
+
+        ind_diff += 1
+
+    sum_arrangs = 0
+    if not node.value in calculated:
+        for candidate_node, ind_diff in candidate_nodes_diffs:
+            arrangs = calculate_subtree_arrangements_o1(candidate_node, all_nodes[ind_diff:], calculated)
+            sum_arrangs += arrangs
+
+    else:
+        sum_arrangs = calculated[node.value]
+
+    calculated[node.value] = sum_arrangs
+
+    return sum_arrangs
+
+
 def calculate_total_arrangements(sorted_adapters):
     node = sorted_adapters[0]
 
-    total_arrangements = calculate_subtree_arrangements_base(node, all_nodes=sorted_adapters)
+    calculated_nodes = dict()
+    total_arrangements = calculate_subtree_arrangements_o1(node, sorted_adapters, calculated_nodes)
 
     return total_arrangements
 
