@@ -12,6 +12,7 @@ ADJACENCY_INDICES = [
     (1, -1),  (1, 0),  (1, 1)
 ]
 
+
 def count_occupied(layout_status):
     return (layout_status == OCC_CHAR).sum()
 
