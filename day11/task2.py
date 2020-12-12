@@ -31,8 +31,6 @@ def count_adj_occ(layout_status, i, j):
 
     return count
 
-    # return sum([1 if layout_status[i + indcs[0], j + indcs[1]] == OCC_CHAR else 0 for indcs in ADJACENCY_INDICES])
-
 
 def check_no_adj_occ(layout_status, i, j):
     for indcs in ADJACENCY_INDICES:
@@ -47,8 +45,6 @@ def check_no_adj_occ(layout_status, i, j):
                 break
 
     return True
-
-    return all([layout_status[i + indcs[0], j + indcs[1]] != OCC_CHAR for indcs in ADJACENCY_INDICES])
 
 
 def apply_rules(layout_status, i, j):
